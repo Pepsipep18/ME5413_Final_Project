@@ -16,7 +16,7 @@ class CameraCalcuation:
         self.listener = tf.TransformListener()
 
         self.camera_info_sub = rospy.Subscriber('/front/rgb/camera_info', CameraInfo, self.camera_params_callback)
-        self.depth_image_sub = rospy.Subscriber('/me5413/depth', Image, self.depth_callback)
+        self.depth_image_sub = rospy.Subscriber('/front/depth/image_raw', Image, self.depth_callback)
         self.detection_sub = rospy.Subscriber('/me5413/detection', Detection2D, self.detection_callback)
 
         self.goal_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
@@ -25,6 +25,7 @@ class CameraCalcuation:
         self.camera_info = None
         self.depth_image = None
 
+    # get the camera parameters
     def camera_params_callback(self, params):
         self.camera_info = params
 
@@ -54,11 +55,12 @@ class CameraCalcuation:
         cx = self.camera_info.K[2]
         cy = self.camera_info.K[5]
 
+        # calculate the depth
         X = (center.x - cx) * depth / fx
         Y = (center.y - cy) * depth / fy
-        Z = depth - 1.0 
+        Z = depth - 0.5 
         if Z < 0:
-            Z = 0.0
+            Z = 0.01
 
         point_stamped = PointStamped()
         current_time = rospy.Time.now()
