@@ -21,9 +21,6 @@
   <node ns="me5413_world" pkg="me5413_world" type="goal_publisher_node" name="goal_publisher_node" output="screen" />
   <node pkg="me5413_world" type="Detection.py" name="TargetDetection" output="screen" />
   <node pkg="me5413_world" type="camera_calculation.py" name="CameraCalcuation" output="screen" />
-  <!-- <node pkg="me5413_world" type="detector.py" name="Detector" output="screen" /> -->
-  <!-- <node pkg="me5413_world" type="roi_coordinate_calculator.py" name="ROICoordinateCalculator" output="screen" /> -->
-  <!-- <node pkg="me5413_world" type="viz.py" name="ObjectDetector" output="screen" />  -->
 
   <!-- <node name="record_bag" pkg="rosbag" type="record" -->
   <!-- args="-O /home/lyu/ME5413_Final/error.bag /me5413_world/absolute/heading_error /me5413_world/absolute/position_error /me5413_world/relative/heading_error /me5413_world/relative/position_error" /> -->
