@@ -294,7 +294,7 @@ Visualization Manager:
         - Class: rviz/Camera
           Enabled: false
           Image Rendering: background and overlay
-          Image Topic: /front/image_raw
+          Image Topic: /front/rgb/image_raw
           Name: Camera
           Overlay Alpha: 0.5
           Queue Size: 2
@@ -337,9 +337,10 @@ Visualization Manager:
               Value: true
             Value: true
           Zoom Factor: 1
+
         - Class: rviz/Image
           Enabled: true
-          Image Topic: /front/image_raw
+          Image Topic: /front/left/image_raw
           Max Value: 1
           Median window: 5
           Min Value: 0

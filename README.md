@@ -3,6 +3,8 @@
 NUS ME5413 Autonomous Mobile Robotics Final Project
 > Authors: [Christina](https://github.com/ldaowen), [Yuhang](https://github.com/yuhang1008), [Dongen](https://github.com/nuslde), and [Shuo](https://github.com/SS47816)
 
+> Editor: Chen Ziao, Fan Xiuqi, Lyu Zhengwen, Wang Sijie, Zhou Tingguang, Fang Chongyu, Final Group 4
+
 ![Ubuntu 20.04](https://img.shields.io/badge/OS-Ubuntu_20.04-informational?style=flat&logo=ubuntu&logoColor=white&color=2bbc8a)
 ![ROS Noetic](https://img.shields.io/badge/Tools-ROS_Noetic-informational?style=flat&logo=ROS&logoColor=white&color=2bbc8a)
 ![C++](https://img.shields.io/badge/Code-C++-informational?style=flat&logo=c%2B%2B&logoColor=white&color=2bbc8a)
@@ -38,6 +40,8 @@ NUS ME5413 Autonomous Mobile Robotics Final Project
   * `jackal_navigation`
   * `velodyne_simulator`
   * `teleop_twist_keyboard`
+  * `vision_msgs`
+* The [kinetic_camera_system] (https://github.com/osrf/gazebo_models/tree/master/kinect), and edited these files according to (https://blog.csdn.net/weixin_43928944/article/details/115905084) and (https://blog.csdn.net/m0_56588389/article/details/121043489)
 * And this [gazebo_model](https://github.com/osrf/gazebo_models) repositiory
 
 ## Installation
@@ -116,13 +120,19 @@ roslaunch me5413_world manual.launch
 
 ![rviz_manual_image](src/me5413_world/media/rviz_manual.png)
 
-### 2. Mapping
+### 2. Mapping by Gmapping
 
 After launching **Step 0**, in the second terminal:
 
 ```bash
 # Launch GMapping
 roslaunch me5413_world mapping.launch
+
+# Launch Aloam
+roslaunch me5413_world aloam.launch
+
+# Launch Fast_Lio
+roslaunch me5413_world fast_lio.launch
 ```
 
 After finishing mapping, run the following command in the thrid terminal to save the map:
@@ -132,10 +142,19 @@ After finishing mapping, run the following command in the thrid terminal to save
 roscd me5413_world/maps/
 rosrun map_server map_saver -f my_map map:=/map
 ```
+When it comes to aloam and fast_lio mapping, to save the 2D map, run the following command in the thrid terminal:
 
-![rviz_nmapping_image](src/me5413_world/media/rviz_mapping.png)
+```bash
+# Save the map as `my_map` in the `maps/` folder
+roslaunch pcd2pgm run.launch
+rosrun map_server map_saver -f my_map /map:=/map
+```
+The .pgm file and the .yaml can be generated.
+
 
 ### 3. Navigation
+
+In order to achieve that the agent can find the target box and navigate to it, some configuration files have been be put into the ``jackal_desciption`` folder to use the kinect camera.
 
 Once completed **Step 2** mapping and saved your map, quit the mapping process.
 

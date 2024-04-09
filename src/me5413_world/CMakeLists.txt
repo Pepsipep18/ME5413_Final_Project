@@ -18,6 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
   tf2_eigen
   tf2_geometry_msgs
+  vision_msgs
+  sensor_msgs
 )
 find_package(gazebo REQUIRED)
 
@@ -26,6 +28,12 @@ catkin_package(
   # LIBRARIES me5413_world
   # CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy std_msgs visualization_msgs
   # DEPENDS system_lib
+)
+
+catkin_install_python(PROGRAMS 
+  scripts/Detection.py
+  scripts/camera_calculation.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 include_directories(

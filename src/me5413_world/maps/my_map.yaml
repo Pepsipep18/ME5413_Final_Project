@@ -1,6 +1,7 @@
-image: my_map.pgm
-resolution: 0.020000
-origin: [-10.000000, -20.240000, 0.000000]
+image: fastlio_final.pgm
+resolution: 0.010000
+origin: [-1.70, -15.80, 0.000000]
+# origin: [0.0, 0.0, 0.000000]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.196

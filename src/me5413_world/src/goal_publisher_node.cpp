@@ -7,6 +7,8 @@
 **/
 
 #include "me5413_world/goal_publisher_node.hpp"
+#include <random>
+
 
 namespace me5413_world 
 {
@@ -24,8 +26,9 @@ GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
   this->sub_goal_name_ = nh_.subscribe("/rviz_panel/goal_name", 1, &GoalPublisherNode::goalNameCallback, this);
   this->sub_goal_pose_ = nh_.subscribe("/move_base_simple/goal", 1, &GoalPublisherNode::goalPoseCallback, this);
   this->sub_box_markers_ = nh_.subscribe("/gazebo/ground_truth/box_markers", 1, &GoalPublisherNode::boxMarkersCallback, this);
-  
-  // Initialization
+
+
+    // Initialization
   this->robot_frame_ = "base_link";
   this->map_frame_ = "map";
   this->world_frame_ = "world";
@@ -33,6 +36,9 @@ GoalPublisherNode::GoalPublisherNode() : tf2_listener_(tf2_buffer_)
   this->absolute_heading_error_.data = 0.0;
   this->relative_position_error_.data = 0.0;
   this->relative_heading_error_.data = 0.0;
+
+
+
 };
 
 void GoalPublisherNode::timerCallback(const ros::TimerEvent&)
@@ -88,6 +94,7 @@ void GoalPublisherNode::robotOdomCallback(const nav_msgs::Odometry::ConstPtr& od
   return;
 };
 
+
 void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
 { 
   const std::string goal_name = name->data;
@@ -108,8 +115,8 @@ void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
       ROS_ERROR_STREAM("Box id is outside the available range, please select a smaller id!");
       return;
     }
-    
-    P_world_goal = box_poses_[goal_box_id - 1];
+    P_world_goal = SetTargetPoint();
+    // P_world_goal = box_poses_[goal_box_id - 1];
   }
   else
   {
@@ -139,12 +146,15 @@ void GoalPublisherNode::goalNameCallback(const std_msgs::String::ConstPtr& name)
   // Transform the robot pose to map frame
   tf2::doTransform(this->pose_world_robot_, this->pose_map_robot_, transform_map_world);
 
+  // publish fixedpoint
+  this->pub_goal_.publish(P_map_goal);
+
   // Publish goal pose in map frame 
   if (this->goal_type_ != "box")
   {
     this->pub_goal_.publish(P_map_goal);
   }
-
+  // this->pub_goal_.publish(P_map_goal);
   return;
 };
 
@@ -152,6 +162,7 @@ void GoalPublisherNode::goalPoseCallback(const geometry_msgs::PoseStamped::Const
 {
   this->pose_map_goal_ = goal_pose->pose;
 }
+
 
 tf2::Transform GoalPublisherNode::convertPoseToTransform(const geometry_msgs::Pose& pose)
 {
@@ -224,6 +235,62 @@ std::pair<double, double> GoalPublisherNode::calculatePoseError(const geometry_m
 
   return std::pair<double, double>(position_error, heading_error);
 }
+
+geometry_msgs::PoseStamped GoalPublisherNode::SetTargetPoint()
+{   
+    struct Position {
+    double x;
+    double y;
+    double yaw;
+  };
+
+  // Define a fixed set of x, y, and yaw combinations
+  std::vector<Position> positions = {
+      {13.0, -2.0, -3.14/2},
+      {8.0, 0.0, -3.14/4},
+      {15.0, -2.0, -3.14/4*3},
+      {11.0, -6.0, 3.14*3/4},
+      {9.0, -6.0, 3.14/4},
+      {13.5, -6.0, 3.14/2},
+      {8.4, -3.4, 0},
+      {15.1, -3.6, 3.14}
+     };
+
+  // Set up random number generation
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<int> index_dist(0, positions.size() - 1);
+
+  // Randomly select an index from the positions vector
+  int index = index_dist(gen);
+
+  // Retrieve the position corresponding to the selected index
+  Position selected_position = positions[index];
+
+  // Fixed values
+  std::cout << "Fixed Points: "
+            << "x = " << selected_position.x << "; "
+            << "y = " << selected_position.y << "; "
+            << "yaw = " << selected_position.yaw << std::endl;
+
+  tf2::Quaternion q;
+  // q.setRPY(0, 0, yaw);
+  q.setRPY(0, 0, selected_position.yaw);
+  q.normalize();
+  geometry_msgs::PoseStamped Fixed_Goal;
+  // Fixed_Goal.pose.position.x = x;
+  // Fixed_Goal.pose.position.y = y;
+  Fixed_Goal.pose.position.x = selected_position.x;
+  Fixed_Goal.pose.position.y = selected_position.y;
+  Fixed_Goal.pose.orientation = tf2::toMsg(q);
+  return Fixed_Goal;
+};
+
+
+
+
+
+
 
 } // namespace me5413_world
 

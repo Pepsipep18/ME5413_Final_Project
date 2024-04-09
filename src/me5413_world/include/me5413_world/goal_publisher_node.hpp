@@ -46,7 +46,11 @@ class GoalPublisherNode
   void goalNameCallback(const std_msgs::String::ConstPtr& name);
   void goalPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& goal_pose);
   void boxMarkersCallback(const visualization_msgs::MarkerArray::ConstPtr& box_markers);
-  
+
+  //add
+  geometry_msgs::PoseStamped SetTargetPoint();
+ 
+
   tf2::Transform convertPoseToTransform(const geometry_msgs::Pose& pose);
   geometry_msgs::PoseStamped getGoalPoseFromConfig(const std::string& name);
   std::pair<double, double> calculatePoseError(const geometry_msgs::Pose& pose_robot, const geometry_msgs::Pose& pose_goal);
@@ -81,6 +85,8 @@ class GoalPublisherNode
   geometry_msgs::Pose pose_map_robot_;
   geometry_msgs::Pose pose_map_goal_;
   std::vector<geometry_msgs::PoseStamped> box_poses_;
+
+
 
   std_msgs::Float32 absolute_position_error_;
   std_msgs::Float32 absolute_heading_error_;
